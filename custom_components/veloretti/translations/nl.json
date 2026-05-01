@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Veloretti koppelen",
+        "description": "Vul het e-mailadres van je Veloretti-account in. Veloretti stuurt je een inlogcode.",
+        "data": {
+          "email": "E-mailadres"
+        }
+      },
+      "code": {
+        "title": "Veloretti-inlogcode invoeren",
+        "description": "Vul de code in die naar {email} is gestuurd.",
+        "data": {
+          "code": "Inlogcode"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Veloretti opnieuw koppelen",
+        "description": "Veloretti heeft een nieuwe inlogcode nodig voor {email}."
+      },
+      "reauth_code": {
+        "title": "Veloretti-inlogcode invoeren",
+        "description": "Vul de nieuwe code in die naar {email} is gestuurd.",
+        "data": {
+          "code": "Inlogcode"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken met Veloretti.",
+      "invalid_auth": "De Veloretti-inlogcode is niet geaccepteerd."
+    },
+    "abort": {
+      "already_configured": "Dit Veloretti-account is al ingesteld.",
+      "reauth_successful": "Veloretti is opnieuw gekoppeld."
+    }
+  },
+  "entity": {
+    "device_tracker": {
+      "vehicle_location": {
+        "name": "Locatie"
+      }
+    },
+    "sensor": {
+      "odometer": {
+        "name": "Kilometerstand"
+      },
+      "status": {
+        "name": "Status"
+      },
+      "sim_status": {
+        "name": "SIM-status"
+      },
+      "location_last_update": {
+        "name": "Locatie laatst bijgewerkt"
+      },
+      "maintenance_status": {
+        "name": "Onderhoudsstatus"
+      },
+      "maintenance_days_until": {
+        "name": "Dagen tot onderhoud"
+      },
+      "maintenance_distance_until": {
+        "name": "Afstand tot onderhoud"
+      },
+      "maintenance_upcoming_date": {
+        "name": "Volgende onderhoudsdatum"
+      },
+      "warranty_status": {
+        "name": "Garantiestatus"
+      },
+      "warranty_expires_at": {
+        "name": "Garantie verloopt op"
+      },
+      "firmware_status": {
+        "name": "{component} firmwarestatus"
+      },
+      "firmware_version": {
+        "name": "{component} firmwareversie"
+      }
+    }
+  }
+}

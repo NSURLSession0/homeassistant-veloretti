@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect Veloretti",
+        "description": "Enter the email address for your Veloretti account. Veloretti will send you a login code.",
+        "data": {
+          "email": "Email address"
+        }
+      },
+      "code": {
+        "title": "Enter Veloretti login code",
+        "description": "Enter the code sent to {email}.",
+        "data": {
+          "code": "Login code"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconnect Veloretti",
+        "description": "Veloretti needs a new login code for {email}."
+      },
+      "reauth_code": {
+        "title": "Enter Veloretti login code",
+        "description": "Enter the new code sent to {email}.",
+        "data": {
+          "code": "Login code"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to Veloretti.",
+      "invalid_auth": "The Veloretti login code was not accepted."
+    },
+    "abort": {
+      "already_configured": "This Veloretti account is already configured.",
+      "reauth_successful": "Veloretti was reconnected successfully."
+    }
+  },
+  "entity": {
+    "device_tracker": {
+      "vehicle_location": {
+        "name": "Location"
+      }
+    },
+    "sensor": {
+      "odometer": {
+        "name": "Odometer"
+      },
+      "status": {
+        "name": "Status"
+      },
+      "sim_status": {
+        "name": "SIM status"
+      },
+      "location_last_update": {
+        "name": "Location last update"
+      },
+      "maintenance_status": {
+        "name": "Maintenance status"
+      },
+      "maintenance_days_until": {
+        "name": "Maintenance days until"
+      },
+      "maintenance_distance_until": {
+        "name": "Maintenance distance until"
+      },
+      "maintenance_upcoming_date": {
+        "name": "Maintenance upcoming date"
+      },
+      "warranty_status": {
+        "name": "Warranty status"
+      },
+      "warranty_expires_at": {
+        "name": "Warranty expires at"
+      },
+      "firmware_status": {
+        "name": "{component} firmware status"
+      },
+      "firmware_version": {
+        "name": "{component} firmware version"
+      }
+    }
+  }
+}

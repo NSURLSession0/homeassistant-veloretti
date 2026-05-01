@@ -1,0 +1,13 @@
+{
+  "domain": "veloretti",
+  "name": "Veloretti",
+  "after_dependencies": [],
+  "codeowners": ["@NSURLSession0"],
+  "config_flow": true,
+  "documentation": "https://github.com/NSURLSession0/homeassistant-veloretti",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/NSURLSession0/homeassistant-veloretti/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
