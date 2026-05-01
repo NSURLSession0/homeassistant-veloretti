@@ -25,6 +25,22 @@ def vehicle_name(vehicle: dict[str, Any]) -> str:
     return "Veloretti"
 
 
+def vehicle_device_info(vehicle: dict[str, Any], vehicle_uuid: str) -> DeviceInfo:
+    """Return Home Assistant device registry information for a vehicle."""
+
+    model = vehicle.get("model")
+    model_name = model.get("name") if isinstance(model, dict) else None
+    vin = vehicle.get("vin")
+
+    return DeviceInfo(
+        identifiers={(DOMAIN, vehicle_uuid)},
+        manufacturer="Veloretti",
+        model=model_name if isinstance(model_name, str) else None,
+        name=vehicle_name(vehicle),
+        serial_number=vin if isinstance(vin, str) and vin else None,
+    )
+
+
 class VelorettiVehicleEntity(CoordinatorEntity[VelorettiCoordinator]):
     """Base class for entities that belong to a single Veloretti vehicle."""
 
@@ -46,13 +62,4 @@ class VelorettiVehicleEntity(CoordinatorEntity[VelorettiCoordinator]):
     def device_info(self) -> DeviceInfo:
         """Return Home Assistant device registry information for the vehicle."""
 
-        vehicle = self.vehicle
-        model = vehicle.get("model")
-        model_name = model.get("name") if isinstance(model, dict) else None
-
-        return DeviceInfo(
-            identifiers={(DOMAIN, self.vehicle_uuid)},
-            manufacturer="Veloretti",
-            model=model_name if isinstance(model_name, str) else None,
-            name=vehicle_name(vehicle),
-        )
+        return vehicle_device_info(self.vehicle, self.vehicle_uuid)

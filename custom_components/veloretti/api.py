@@ -172,6 +172,41 @@ class VelorettiClient:
         )
         return self._data_object(payload)
 
+    async def download_vehicle_image(self, image_url: str) -> bytes:
+        """Download a vehicle model image from Veloretti's signed image URL.
+
+        Veloretti returns a short-lived S3 URL inside the authenticated vehicle
+        payload. The URL itself authorizes the image request, so this method does
+        not attach the Veloretti bearer token or API key.
+        """
+
+        try:
+            response = await self._session.request(
+                "GET",
+                image_url,
+                headers={
+                    "Accept": "image/*",
+                    "User-Agent": USER_AGENT,
+                },
+            )
+        except ClientError as err:
+            raise VelorettiApiError(
+                "Could not download Veloretti vehicle image"
+            ) from err
+
+        async with response:
+            if response.status >= 400:
+                raise VelorettiApiError("Veloretti vehicle image download failed")
+
+            image_content = await response.read()
+            content_type = response.headers.get("Content-Type", "")
+            if not content_type.lower().startswith("image/") and not _looks_like_image(
+                image_content
+            ):
+                raise VelorettiApiError("Veloretti vehicle image was not an image")
+
+            return image_content
+
     async def refresh_access_token(self) -> VelorettiTokens:
         """Use the refresh token to get a new access token."""
 
@@ -325,3 +360,16 @@ class VelorettiClient:
         """Return the millisecond cache-buster used by the official app."""
 
         return str(int(time.time() * 1000))
+
+
+def _looks_like_image(content: bytes) -> bool:
+    """Return whether bytes start with a known image file signature."""
+
+    return content.startswith(
+        (
+            b"\x89PNG",
+            b"\xff\xd8\xff",
+            b"GIF8",
+            b"RIFF",
+        )
+    )

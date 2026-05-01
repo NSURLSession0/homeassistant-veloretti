@@ -58,11 +58,20 @@ api = _load_api_module()
 class FakeResponse:
     """Minimal aiohttp-like response used by the client tests."""
 
-    def __init__(self, status: int, payload: dict[str, Any]) -> None:
+    def __init__(
+        self,
+        status: int,
+        payload: dict[str, Any],
+        *,
+        headers: dict[str, str] | None = None,
+        content: bytes = b"",
+    ) -> None:
         """Create a fake response with a status and JSON payload."""
 
         self.status = status
         self._payload = payload
+        self.headers = headers or {"Content-Type": "application/json"}
+        self._content = content
 
     async def __aenter__(self) -> FakeResponse:
         """Enter the async context manager used by aiohttp responses."""
@@ -76,6 +85,11 @@ class FakeResponse:
         """Return the configured JSON payload."""
 
         return self._payload
+
+    async def read(self) -> bytes:
+        """Return the configured response bytes."""
+
+        return self._content
 
 
 class FakeSession:
@@ -238,6 +252,59 @@ class VelorettiApiTests(unittest.TestCase):
         self.assertEqual(account["uuid"], "account")
         self.assertEqual(stored_tokens[-1].token, new_token)
         self.assertEqual(stored_tokens[-1].refresh_token, new_refresh_token)
+
+    def test_vehicle_image_download_uses_signed_url_without_auth_headers(self) -> None:
+        """Vehicle images are fetched from the signed URL without Veloretti auth."""
+
+        image_content = b"\x89PNG"
+        session = FakeSession(
+            [
+                FakeResponse(
+                    200,
+                    {},
+                    headers={"Content-Type": "image/png"},
+                    content=image_content,
+                )
+            ]
+        )
+        client = api.VelorettiClient(session)
+
+        result = _run(
+            client.download_vehicle_image(
+                "https://fleetflow-veloretti.example/model.png?signature=temporary"
+            )
+        )
+
+        self.assertEqual(result, image_content)
+        self.assertEqual(session.calls[0]["method"], "GET")
+        self.assertEqual(session.calls[0]["headers"]["Accept"], "image/*")
+        self.assertNotIn("Authorization", session.calls[0]["headers"])
+        self.assertNotIn("X-Api-Key", session.calls[0]["headers"])
+
+    def test_vehicle_image_download_accepts_image_bytes_with_generic_content_type(
+        self,
+    ) -> None:
+        """Signed image URLs can use generic content types when bytes are valid."""
+
+        session = FakeSession(
+            [
+                FakeResponse(
+                    200,
+                    {},
+                    headers={"Content-Type": "application/octet-stream"},
+                    content=b"\x89PNG",
+                )
+            ]
+        )
+        client = api.VelorettiClient(session)
+
+        result = _run(
+            client.download_vehicle_image(
+                "https://fleetflow-veloretti.example/model.png?signature=temporary"
+            )
+        )
+
+        self.assertEqual(result, b"\x89PNG")
 
 
 if __name__ == "__main__":

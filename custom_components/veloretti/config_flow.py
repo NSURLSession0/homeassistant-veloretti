@@ -9,15 +9,19 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.selector import selector
 
 from .api import VelorettiApiError, VelorettiAuthError, VelorettiClient
 from .const import (
     CONF_ACCOUNT_UUID,
     CONF_EMAIL,
     CONF_REFRESH_TOKEN,
+    CONF_SCAN_INTERVAL_MINUTES,
     CONF_SESSION_UUID,
     CONF_TOKEN,
+    DEFAULT_SCAN_INTERVAL_MINUTES,
     DOMAIN,
+    SCAN_INTERVAL_MINUTE_OPTIONS,
 )
 
 CONF_CODE = "code"
@@ -193,12 +197,49 @@ class VelorettiConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class VelorettiOptionsFlow(config_entries.OptionsFlow):
-    """Options flow placeholder for future user-tunable polling settings."""
+    """Handle Veloretti options that users can change from the UI."""
 
     async def async_step_init(
         self,
         user_input: dict[str, Any] | None = None,
     ) -> config_entries.ConfigFlowResult:
-        """Show an empty options form so the integration is options-ready."""
+        """Let the user configure how often Veloretti data is refreshed."""
 
-        return self.async_create_entry(title="", data={})
+        if user_input is not None:
+            return self.async_create_entry(
+                title="",
+                data={
+                    CONF_SCAN_INTERVAL_MINUTES: int(
+                        user_input[CONF_SCAN_INTERVAL_MINUTES]
+                    )
+                },
+            )
+
+        scan_interval_minutes = self.config_entry.options.get(
+            CONF_SCAN_INTERVAL_MINUTES,
+            DEFAULT_SCAN_INTERVAL_MINUTES,
+        )
+        if scan_interval_minutes not in SCAN_INTERVAL_MINUTE_OPTIONS:
+            scan_interval_minutes = DEFAULT_SCAN_INTERVAL_MINUTES
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_SCAN_INTERVAL_MINUTES,
+                        default=str(scan_interval_minutes),
+                    ): selector(
+                        {
+                            "select": {
+                                "options": [
+                                    str(option)
+                                    for option in SCAN_INTERVAL_MINUTE_OPTIONS
+                                ],
+                                "mode": "dropdown",
+                            }
+                        }
+                    )
+                }
+            ),
+        )

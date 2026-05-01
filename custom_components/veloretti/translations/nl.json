@@ -36,15 +36,34 @@
       "reauth_successful": "Veloretti is opnieuw gekoppeld."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Veloretti-opties",
+        "description": "Kies hoe vaak Home Assistant nieuwe Veloretti-data ophaalt.",
+        "data": {
+          "scan_interval_minutes": "Verversinterval in minuten"
+        }
+      }
+    }
+  },
   "entity": {
     "device_tracker": {
       "vehicle_location": {
         "name": "Locatie"
       }
     },
+    "image": {
+      "vehicle_image": {
+        "name": "Model afbeelding"
+      }
+    },
     "sensor": {
       "odometer": {
         "name": "Kilometerstand"
+      },
+      "vin": {
+        "name": "VIN"
       },
       "status": {
         "name": "Status"

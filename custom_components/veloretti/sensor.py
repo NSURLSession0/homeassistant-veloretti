@@ -46,6 +46,13 @@ SENSOR_DESCRIPTIONS: tuple[VelorettiSensorEntityDescription, ...] = (
         value_fn=lambda vehicle: _meters_to_kilometers(vehicle.get("odometer")),
     ),
     VelorettiSensorEntityDescription(
+        key="vin",
+        translation_key="vin",
+        icon="mdi:identifier",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda vehicle: vehicle.get("vin"),
+    ),
+    VelorettiSensorEntityDescription(
         key="status",
         translation_key="status",
         icon="mdi:bicycle-electric",
@@ -208,18 +215,10 @@ class VelorettiFirmwareSensor(CoordinatorEntity[VelorettiCoordinator], SensorEnt
     def device_info(self) -> DeviceInfo:
         """Attach firmware sensors to the parent vehicle device."""
 
-        from .const import DOMAIN
-        from .entity import vehicle_name
+        from .entity import vehicle_device_info
 
         vehicle = self.coordinator.data.vehicles[self.vehicle_uuid]
-        model = vehicle.get("model")
-        model_name = model.get("name") if isinstance(model, dict) else None
-        return DeviceInfo(
-            identifiers={(DOMAIN, self.vehicle_uuid)},
-            manufacturer="Veloretti",
-            model=model_name if isinstance(model_name, str) else None,
-            name=vehicle_name(vehicle),
-        )
+        return vehicle_device_info(vehicle, self.vehicle_uuid)
 
     @property
     def native_value(self) -> str | None:

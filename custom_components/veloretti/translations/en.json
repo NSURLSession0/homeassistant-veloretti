@@ -36,15 +36,34 @@
       "reauth_successful": "Veloretti was reconnected successfully."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Veloretti options",
+        "description": "Choose how often Home Assistant fetches new Veloretti data.",
+        "data": {
+          "scan_interval_minutes": "Refresh interval in minutes"
+        }
+      }
+    }
+  },
   "entity": {
     "device_tracker": {
       "vehicle_location": {
         "name": "Location"
       }
     },
+    "image": {
+      "vehicle_image": {
+        "name": "Model image"
+      }
+    },
     "sensor": {
       "odometer": {
         "name": "Odometer"
+      },
+      "vin": {
+        "name": "VIN"
       },
       "status": {
         "name": "Status"
